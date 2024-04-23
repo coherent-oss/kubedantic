@@ -1,5 +1,5 @@
-Welcome to |project| documentation!
-===================================
+Welcome to the |project| documentation!
+=======================================
 
 .. sidebar-links::
    :home:
@@ -11,7 +11,7 @@ Welcome to |project| documentation!
    history
 
 
-.. automodule:: PROJECT
+.. automodule:: kubedantic
     :members:
     :undoc-members:
     :show-inheritance:
