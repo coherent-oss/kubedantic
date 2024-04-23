@@ -2,6 +2,7 @@ import argparse
 import logging
 import sys
 from pathlib import Path
+from typing import Tuple
 
 from datamodel_code_generator.parser.base import Result
 
@@ -38,7 +39,7 @@ def _get_options(args):
     return parser.parse_args(args)
 
 
-def _write_result(path: tuple[str, ...], result: Result, output_path: Path):
+def _write_result(path: Tuple[str, ...], result: Result, output_path: Path):
     output_file = output_path.joinpath(*path[1:]).with_suffix(".py")
     logging.info("Generating %s", output_file)
     output_file.parent.mkdir(parents=True, exist_ok=True)

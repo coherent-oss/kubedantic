@@ -1,7 +1,7 @@
 import json
 import logging
 from pathlib import Path
-from typing import Any, Generator, Optional, Union
+from typing import Any, Dict, Generator, List, Optional, Union
 
 from kubernetes import client, config
 from pydantic import BaseModel, Field
@@ -9,7 +9,7 @@ from pydantic import BaseModel, Field
 logger = logging.getLogger(__name__)
 
 
-API_PATH_BY_TITLE: dict[str, Path] = {
+API_PATH_BY_TITLE: Dict[str, Path] = {
     "Kubernetes": Path("k8s"),  # Kubernetes API
     "Kubernetes CRD Swagger": Path("crd"),  # CustomResourceDefinition API
 }
@@ -29,7 +29,7 @@ class SchemaMetadata(BaseModel):
         return API_PATH_BY_TITLE.get(self.title, Path(""))
 
     @classmethod
-    def from_spec(cls, spec: dict[str, Any]) -> "SchemaMetadata":
+    def from_spec(cls, spec: Dict[str, Any]) -> "SchemaMetadata":
         return cls(
             openapi=spec["openapi"],
             title=spec["info"]["title"],
@@ -38,10 +38,10 @@ class SchemaMetadata(BaseModel):
 
 
 class Schema(BaseModel):
-    openapi_schema: dict[str, Any] = Field(default_factory=dict)
+    openapi_schema: Dict[str, Any] = Field(default_factory=dict)
     metadata: SchemaMetadata
 
-    def to_openapi(self) -> dict[str, Any]:
+    def to_openapi(self) -> Dict[str, Any]:
         return {
             "openapi": self.metadata.openapi,
             "info": {"title": self.metadata.title, "version": self.metadata.version},
@@ -66,7 +66,7 @@ class K8sOpenAPIExtractor:
         stem = Path(path.split("?")[0]).stem
         return not stem.startswith("v") or stem == "version"
 
-    def _add_to_schema_by_path(self, spec: dict[str, Any]):
+    def _add_to_schema_by_path(self, spec: Dict[str, Any]):
         spec_metadata = SchemaMetadata.from_spec(spec)
 
         if not spec_metadata.is_supported:
@@ -129,7 +129,7 @@ class K8sOpenAPIExtractor:
             for path, schemas in self.schema_by_path.items()
         )
 
-    def extract(self) -> list[Path]:
+    def extract(self) -> List[Path]:
         """
         Extracts the Kubernetes OpenAPI specs and writes them to the output path.
 

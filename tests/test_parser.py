@@ -1,4 +1,5 @@
 from pathlib import Path
+from typing import Tuple
 from unittest import TestCase
 
 import pytest
@@ -19,7 +20,7 @@ class K8sOpenAPIParserTestCase(TestCase):
             K8sOpenAPIExtractor(output_path=self.specs_path).extract()
         )
 
-    def _compare_with_expected(self, name: tuple[str, ...], result: str):
+    def _compare_with_expected(self, name: Tuple[str, ...], result: str):
         expected_file = self.expected_path.joinpath(*name[4:]).with_suffix(".py")
 
         with open(expected_file, "r") as f:

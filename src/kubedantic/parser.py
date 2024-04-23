@@ -1,7 +1,7 @@
 import logging
 import sys
 from pathlib import Path
-from typing import Any, Optional, Union
+from typing import Any, List, Optional, Tuple, Union
 from urllib.parse import ParseResult
 
 from datamodel_code_generator.format import PythonVersion
@@ -20,7 +20,7 @@ def _get_python_version() -> PythonVersion:
 
 
 class K8sSchemaObject(JsonSchemaObject):
-    def _get_group_version_kind(self) -> tuple[str, str, str]:
+    def _get_group_version_kind(self) -> Tuple[str, str, str]:
         """
         Returns the group, version and kind of the object, if available.
 
@@ -102,7 +102,7 @@ class K8sOpenAPIParser(OpenAPIParser):
     SCHEMA_OBJECT_TYPE = K8sSchemaObject
 
     def __init__(
-        self, source: Union[str, Path, list[Path], ParseResult], **kwargs: Any
+        self, source: Union[str, Path, List[Path], ParseResult], **kwargs: Any
     ):
         target_python_version = kwargs.pop(
             "target_python_version", _get_python_version()
