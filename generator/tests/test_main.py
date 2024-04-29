@@ -3,6 +3,7 @@ from pathlib import Path
 from unittest import mock
 
 import pytest
+from freezegun import freeze_time
 
 from ..main import run
 
@@ -16,10 +17,10 @@ def output_path(data_path: Path):
 
 @mock.patch("generator.main.K8sOpenAPIExtractor.extract")
 @mock.patch("generator.main.K8sOpenAPIParser.parse")
+@freeze_time("2024-01-01")
 def test_run(
-    mock_parse: mock.MagicMock, mock_extract: mock.MagicMock, output_path: Path, freezer
+    mock_parse: mock.MagicMock, mock_extract: mock.MagicMock, output_path: Path
 ):
-    freezer.move_to("2024-01-01")
     mock_extract.return_value = [Path("path/to/spec")]
     mock_parse.return_value = {
         ("path", "to", "spec"): mock.MagicMock(body="class Test: pass"),

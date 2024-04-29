@@ -24,8 +24,7 @@ class K8sOpenAPIExtractorTestCase(TestCase):
         shutil.rmtree(self.output_path, ignore_errors=True)
 
     def _load_json(self, path: Path) -> Any:
-        with open(path) as f:
-            return json.load(f)
+        return json.loads(path.read_text())
 
     def _mock_response(self, payload: Path) -> mock.MagicMock:
         response = mock.MagicMock()
