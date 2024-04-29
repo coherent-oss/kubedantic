@@ -129,9 +129,9 @@ def run(args):
     _cleanup_empty_modules(output_path)
 
 
-def main():
+def main():  # pragma: no cover
     run(sys.argv[1:])
 
 
-if __name__ == "__main__":
+if __name__ == "__main__":  # pragma: no cover
     main()

@@ -3,7 +3,7 @@ import logging
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Tuple, Union
 
-import requests
+import requests  # type: ignore
 from pydantic import BaseModel
 
 logger = logging.getLogger(__name__)
@@ -18,6 +18,10 @@ SKIP_SPECS = {
     "apis__internal.apiserver.k8s.io__v1alpha1_openapi.json",
     "apis__storagemigration.k8s.io__v1alpha1_openapi.json",
 }
+
+
+class NoSchemaFoundError(Exception):
+    pass
 
 
 class Schema(BaseModel):
@@ -57,8 +61,7 @@ class OpenAPIPath(BaseModel):
 
 
 class K8sOpenAPIExtractor:
-    schema: Optional[Schema] = None
-    k8s_version: Optional[str] = None
+    _k8s_version: Optional[str] = None
 
     def __init__(
         self,
@@ -74,6 +77,12 @@ class K8sOpenAPIExtractor:
         self.repo_name = repo_name
         self.version = version
         self.client = requests.Session()
+
+    @property
+    def k8s_version(self) -> str:
+        if self._k8s_version is None:
+            self._k8s_version = self._fetch_k8s_version()
+        return self._k8s_version
 
     def _fetch(
         self,
@@ -103,50 +112,47 @@ class K8sOpenAPIExtractor:
             if content["type"] == "file"
         ]
 
-    def _write_schema(self) -> Path:
-        assert self.schema is not None, "Schema is not loaded yet."
-        assert self.k8s_version is not None, "K8s version is not resolved yet."
+    def _fetch_k8s_version(self) -> str:
+        tag = "latest" if self.version == LATEST_K8S_VERSION else self.version
 
+        logger.info("Fetching release %s", tag)
+        version = self._fetch(
+            path=f"repos/{self.repo_owner}/{self.repo_name}/releases/{tag}"
+        )["tag_name"]
+        logger.info("Found k8s version %s", version)
+        return version
+
+    def _write_schema(self, schema: Schema) -> Path:
         out_path = self.output_path / Path(
             self.k8s_version.replace(".", "_")
         ).with_suffix(".json")
         out_path.parent.mkdir(parents=True, exist_ok=True)
 
         logger.info("Writing spec to %s", out_path)
-
-        with open(out_path, "w") as f:
-            f.write(json.dumps(self.schema.to_openapi(), indent=4, default=str))
-
+        out_path.write_text(json.dumps(schema.to_openapi(), indent=4, default=str))
         return out_path
 
-    def _add_to_schema(self, spec: Dict[str, Any]):
-        if self.schema is None:
-            self.schema = Schema.from_spec(spec)
-        else:
-            self.schema.schemas.update(spec["components"]["schemas"])
+    def _build_schema(self) -> Optional[Schema]:
+        schema = None
 
-    def _load_schema_by_path(self) -> Path:
-        paths = self._fetch_openapi_specs()
-        for path in paths:
+        for path in self._fetch_openapi_specs():
             if path.should_skip:
                 continue
 
             logger.info("Fetching specs for %s", path.download_url)
             spec = self._fetch(url=path.download_url)
-            self._add_to_schema(spec)
 
-        return self._write_schema()
+            if schema is None:
+                schema = Schema.from_spec(spec)
+            else:
+                schema.schemas.update(spec["components"]["schemas"])
 
-    def _resolve_k8s_version(self) -> None:
-        tag = "latest" if self.version == LATEST_K8S_VERSION else self.version
-
-        logger.info("Fetching release %s", tag)
-        release = self._fetch(
-            path=f"repos/{self.repo_owner}/{self.repo_name}/releases/{tag}"
-        )
-        self.k8s_version = release["tag_name"]
-        logger.info("Resolved k8s version: %s", self.k8s_version)
+        return schema
 
     def extract(self) -> Path:
-        self._resolve_k8s_version()
-        return self._load_schema_by_path().absolute()
+        schema = self._build_schema()
+
+        if schema is None:
+            raise NoSchemaFoundError("Unable to find any schema")
+
+        return self._write_schema(schema)

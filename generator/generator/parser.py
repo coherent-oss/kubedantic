@@ -1,11 +1,11 @@
 import logging
 import sys
 from pathlib import Path
-from typing import Any, List, Optional, Tuple, Union
+from typing import Any, List, Optional, Tuple, Type, Union
 from urllib.parse import ParseResult
 
 from datamodel_code_generator.format import PythonVersion
-from datamodel_code_generator.model import pydantic_v2
+from datamodel_code_generator.model import DataModel, DataModelFieldBase, pydantic_v2
 from datamodel_code_generator.parser.jsonschema import JsonSchemaObject
 from datamodel_code_generator.parser.openapi import OpenAPIParser
 from pydantic import model_validator
@@ -102,19 +102,17 @@ class K8sOpenAPIParser(OpenAPIParser):
     SCHEMA_OBJECT_TYPE = K8sSchemaObject
 
     def __init__(
-        self, source: Union[str, Path, List[Path], ParseResult], **kwargs: Any
+        self,
+        source: Union[str, Path, List[Path], ParseResult],
+        data_model_type: Type[DataModel] = pydantic_v2.BaseModel,
+        data_model_field_type: Type[DataModelFieldBase] = K8sDataModelField,
+        target_python_version: PythonVersion = _get_python_version(),
+        use_default_kwarg: bool = True,
+        wrap_string_literal: Optional[bool] = True,
+        use_double_quotes: bool = True,
+        collapse_root_models: bool = True,
+        **kwargs: Any,
     ):
-        target_python_version = kwargs.pop(
-            "target_python_version", _get_python_version()
-        )
-        data_model_field_type = kwargs.pop("data_model_field_type", K8sDataModelField)
-        data_model_type = kwargs.pop("data_model_type", pydantic_v2.BaseModel)
-
-        wrap_string_literal = kwargs.pop("wrap_string_literal", True)
-        use_double_quotes = kwargs.pop("use_double_quotes", True)
-        collapse_root_models = kwargs.pop("collapse_root_models", True)
-        use_default_kwarg = kwargs.pop("use_default_kwarg", True)
-
         super().__init__(
             source=source,
             data_model_field_type=data_model_field_type,
