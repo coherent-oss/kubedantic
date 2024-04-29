@@ -4,16 +4,16 @@
 
 from __future__ import annotations
 
-from typing import List, Optional
+from typing import Dict, List, Optional
 
 from pydantic import BaseModel, Field
 
 from ...apimachinery.pkg.apis.meta import v1
 
 
-class PriorityClass(BaseModel):
+class VolumeAttributesClass(BaseModel):
     apiVersion: Optional[str] = Field(
-        default="scheduling.k8s.io/v1",
+        default="storage.k8s.io/v1alpha1",
         description=(
             "APIVersion defines the versioned schema of this representation of an"
             " object. Servers should convert recognized schemas to the latest internal"
@@ -21,26 +21,11 @@ class PriorityClass(BaseModel):
             " https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources"
         ),
     )
-    description: Optional[str] = Field(
-        default=None,
-        description=(
-            "description is an arbitrary string that usually provides guidelines on"
-            " when this priority class should be used."
-        ),
-    )
-    globalDefault: Optional[bool] = Field(
-        default=None,
-        description=(
-            "globalDefault specifies whether this PriorityClass should be considered as"
-            " the default priority for pods that do not have any priority class. Only"
-            " one PriorityClass can be marked as `globalDefault`. However, if more than"
-            " one PriorityClasses exists with their `globalDefault` field set to true,"
-            " the smallest value of such global default PriorityClasses will be used as"
-            " the default priority."
-        ),
+    driverName: str = Field(
+        ..., description="Name of the CSI driver This field is immutable."
     )
     kind: Optional[str] = Field(
-        default="PriorityClass",
+        default="VolumeAttributesClass",
         description=(
             "Kind is a string value representing the REST resource this object"
             " represents. Servers may infer this from the endpoint the client submits"
@@ -55,27 +40,28 @@ class PriorityClass(BaseModel):
             " https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#metadata"
         ),
     )
-    preemptionPolicy: Optional[str] = Field(
+    parameters: Optional[Dict[str, str]] = Field(
         default=None,
         description=(
-            "preemptionPolicy is the Policy for preempting pods with lower priority."
-            " One of Never, PreemptLowerPriority. Defaults to PreemptLowerPriority if"
-            " unset."
-        ),
-    )
-    value: int = Field(
-        ...,
-        description=(
-            "value represents the integer value of this priority class. This is the"
-            " actual priority that pods receive when they have the name of this class"
-            " in their pod spec."
+            "parameters hold volume attributes defined by the CSI driver. These values"
+            " are opaque to the Kubernetes and are passed directly to the CSI driver."
+            " The underlying storage provider supports changing these attributes on an"
+            " existing volume, however the parameters field itself is immutable. To"
+            " invoke a volume update, a new VolumeAttributesClass should be created"
+            " with new parameters, and the PersistentVolumeClaim should be updated to"
+            " reference the new VolumeAttributesClass.\n\nThis field is required and"
+            " must contain at least one key/value pair. The keys cannot be empty, and"
+            " the maximum number of parameters is 512, with a cumulative max size of"
+            " 256K. If the CSI driver rejects invalid parameters, the target"
+            ' PersistentVolumeClaim will be set to an "Infeasible" state in the'
+            " modifyVolumeStatus field."
         ),
     )
 
 
-class PriorityClassList(BaseModel):
+class VolumeAttributesClassList(BaseModel):
     apiVersion: Optional[str] = Field(
-        default="scheduling.k8s.io/v1",
+        default="storage.k8s.io/v1alpha1",
         description=(
             "APIVersion defines the versioned schema of this representation of an"
             " object. Servers should convert recognized schemas to the latest internal"
@@ -83,11 +69,11 @@ class PriorityClassList(BaseModel):
             " https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources"
         ),
     )
-    items: List[PriorityClass] = Field(
-        ..., description="items is the list of PriorityClasses"
+    items: List[VolumeAttributesClass] = Field(
+        ..., description="items is the list of VolumeAttributesClass objects."
     )
     kind: Optional[str] = Field(
-        default="PriorityClassList",
+        default="VolumeAttributesClassList",
         description=(
             "Kind is a string value representing the REST resource this object"
             " represents. Servers may infer this from the endpoint the client submits"
