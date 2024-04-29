@@ -45,6 +45,13 @@ docs = [
 
 	# local
 ]
+generator = [
+	# upstream
+	"datamodel-code-generator >= 0.25.5",
+	"requests >= 2.31.0",
+
+	# local
+]
 
 [project.urls]
 Homepage = "https://github.com/coherent-oss/kubedantic"
