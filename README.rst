@@ -1,3 +1,6 @@
+Kubedantic
+======================================================
+
 .. image:: https://img.shields.io/pypi/v/kubedantic.svg
    :target: https://pypi.org/project/kubedantic
 
@@ -16,3 +19,12 @@
 
 .. image:: https://img.shields.io/badge/skeleton-2024-informational
    :target: https://blog.jaraco.com/skeleton
+
+Kubedantic - Pydantic models for Kubernetes
+
+Overview
+--------
+
+Kubedantic is a Python library that provides Pydantic models for Kubernetes resources.
+
+Models are generated using the `Kubernetes OpenAPI specification <https://github.com/kubernetes/kubernetes/tree/master/api/openapi-spec/v3>`_ and `datamodel-code-generator <https://github.com/koxudaxi/datamodel-code-generator>`_.

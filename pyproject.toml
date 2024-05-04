@@ -32,6 +32,7 @@ testing = [
 	"pytest-mypy",
 	"pytest-enabler >= 2.2",
 	"pytest-ruff >= 0.2.1",
+	"freezegun >= 1.5.0",
 
 	# local
 ]
@@ -42,6 +43,13 @@ docs = [
 	"rst.linker >= 1.9",
 	"furo",
 	"sphinx-lint",
+
+	# local
+]
+generator = [
+	# upstream
+	"datamodel-code-generator >= 0.25.5",
+	"requests >= 2.31.0",
 
 	# local
 ]

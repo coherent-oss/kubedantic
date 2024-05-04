@@ -1,0 +1,30 @@
+[
+    {
+        "name": ".well-known__openid-configuration_openapi.json",
+        "path": "api/openapi-spec/v3/.well-known__openid-configuration_openapi.json",
+        "url": "https://api.github.com/repos/kubernetes/kubernetes/contents/api/openapi-spec/v3/.well-known__openid-configuration_openapi.json?ref=master",
+        "download_url": "https://raw.githubusercontent.com/kubernetes/kubernetes/master/api/openapi-spec/v3/.well-known__openid-configuration_openapi.json",
+        "type": "file"
+    },
+    {
+        "name": "apis__apps__v1_openapi.json",
+        "path": "api/openapi-spec/v3/apis__apps__v1_openapi.json",
+        "url": "https://api.github.com/repos/kubernetes/kubernetes/contents/api/openapi-spec/v3/apis__apps__v1_openapi.json?ref=master",
+        "download_url": "https://raw.githubusercontent.com/kubernetes/kubernetes/master/api/openapi-spec/v3/apis__apps__v1_openapi.json",
+        "type": "file"
+    },
+    {
+        "name": "apis__apps_openapi.json",
+        "path": "api/openapi-spec/v3/apis__apps_openapi.json",
+        "url": "https://api.github.com/repos/kubernetes/kubernetes/contents/api/openapi-spec/v3/apis__apps_openapi.json?ref=master",
+        "download_url": "https://raw.githubusercontent.com/kubernetes/kubernetes/master/api/openapi-spec/v3/apis__apps_openapi.json",
+        "type": "file"
+    },
+    {
+        "name": "apis__batch__v1_openapi.json",
+        "path": "api/openapi-spec/v3/apis__batch__v1_openapi.json",
+        "url": "https://api.github.com/repos/kubernetes/kubernetes/contents/api/openapi-spec/v3/apis__batch__v1_openapi.json?ref=master",
+        "download_url": "https://raw.githubusercontent.com/kubernetes/kubernetes/master/api/openapi-spec/v3/apis__batch__v1_openapi.json",
+        "type": "file"
+    }
+]
