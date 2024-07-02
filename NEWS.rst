@@ -1,3 +1,12 @@
+v0.1.1
+======
+
+Features
+--------
+
+- Makes package PEP-561 compliant by adding py.typed file
+
+
 v0.1.0
 ======
 
