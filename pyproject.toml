@@ -60,3 +60,6 @@ Homepage = "https://github.com/coherent-oss/kubedantic"
 [project.scripts]
 
 [tool.setuptools_scm]
+
+[tool.setuptools.package-data]
+kubedantic = ["py.typed"]
